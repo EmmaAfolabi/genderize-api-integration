@@ -7,8 +7,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew build -x test --no-daemon
 
 FROM eclipse-temurin:21-jre-jammy 
-ARG JAR_FILE=/usr/app/build/libs/*SNAPSHOT.jar
-COPY --from=build ${JAR_FILE} app.jar
+COPY --from=build /usr/app/build/libs/app.jar app.jar
 ENV PORT=8080
 EXPOSE 8080
 ENTRYPOINT ["java", "-Xmx300m", "-jar", "/app.jar"]
