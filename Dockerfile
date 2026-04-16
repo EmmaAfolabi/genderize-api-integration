@@ -4,10 +4,11 @@ RUN mkdir -p $HOME
 WORKDIR $HOME
 ADD . $HOME
 RUN chmod +x ./gradlew
-RUN ./gradlew build -x test
+RUN ./gradlew build -x test --no-daemon
 
 FROM eclipse-temurin:21-jre-jammy 
 ARG JAR_FILE=/usr/app/build/libs/*SNAPSHOT.jar
 COPY --from=build ${JAR_FILE} app.jar
+ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Xmx300m", "-jar", "/app.jar"]
