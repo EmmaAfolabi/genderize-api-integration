@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.dto.ClassifyData;
 import com.example.demo.dto.GenderizeResponse;
-import com.example.demo.exception.GenderizeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.RestClientException;
@@ -33,12 +32,19 @@ public class GenderizeService {
             throw new RuntimeException("External API error");
         }
 
-        // Standard check: if external API returns 200 but gender is null, it means no prediction found
+        // Return a successful but null-gender response if no results are found
         if (response == null || response.gender() == null) {
-            throw new GenderizeException("No prediction available for the name: " + name);
+            return new ClassifyData(
+                name,
+                null,
+                0.0,
+                0,
+                false,
+                Instant.now().toString()
+            );
         }
 
-        // High confidence threshold: probability >= 0.9 and significant sample size (>= 1000)
+        // Use standard thresholds: probability >= 0.9 and sample size >= 1000
         boolean isConfident = response.probability() != null && 
                              response.probability() >= 0.9 && 
                              response.count() != null && 

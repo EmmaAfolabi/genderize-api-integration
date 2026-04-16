@@ -13,8 +13,8 @@ import jakarta.validation.ConstraintViolationException;
 @org.springframework.web.bind.annotation.CrossOrigin(origins = "*")
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(GenderizeException.class)
-    public ResponseEntity<ErrorResponse> handleGenderizeException(GenderizeException ex) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("error", ex.getMessage())); 
     }
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.valueOf(422))
                 .body(new ErrorResponse("error", "Name must be a string"));
     }
 
