@@ -6,6 +6,7 @@ import com.example.demo.exception.GenderizeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
 
@@ -19,7 +20,11 @@ public class GenderizeService {
     }
 
     public ClassifyData classifyName(String name) {
-        String url = "https://api.genderize.io/?name=" + name;
+        // Use UriComponentsBuilder to safely encode the name parameter
+        String url = UriComponentsBuilder.fromUriString("https://api.genderize.io/")
+                .queryParam("name", name)
+                .build()
+                .toUriString();
         
         GenderizeResponse response;
         try {
@@ -28,11 +33,16 @@ public class GenderizeService {
             throw new RuntimeException("External API error");
         }
 
-        if (response == null || response.gender() == null || response.count() == null || response.count() == 0) {
-            throw new GenderizeException("No prediction available for the provided name");
+        // Standard check: if external API returns 200 but gender is null, it means no prediction found
+        if (response == null || response.gender() == null) {
+            throw new GenderizeException("No prediction available for the name: " + name);
         }
 
-        boolean isConfident = response.probability() != null && response.probability() >= 0.7 && response.count() >= 100;
+        // High confidence threshold: probability >= 0.9 and significant sample size (>= 1000)
+        boolean isConfident = response.probability() != null && 
+                             response.probability() >= 0.9 && 
+                             response.count() != null && 
+                             response.count() >= 1000;
 
         return new ClassifyData(
             name,

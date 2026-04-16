@@ -10,6 +10,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
+@org.springframework.web.bind.annotation.CrossOrigin(origins = "*")
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(GenderizeException.class)
