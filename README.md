@@ -54,8 +54,8 @@ Predict the gender for a given name.
 }
 ```
 
-## Deployment (Render)
+## Deployment (Railway)
 1. Push this repository to GitHub.
-2. Go to Render.com and create a new **Web Service**.
-3. Connect your GitHub repository.
-4. Render will automatically detect the `Dockerfile` and build/deploy your API!
+2. Go to [Railway](https://railway.app/dashboard) and create a **New** project from your **GitHub Repo**.
+3. Select your GitHub repository.
+4. Railway will automatically detect the `Dockerfile`, assign a dynamic `PORT`, and build/deploy your API!
